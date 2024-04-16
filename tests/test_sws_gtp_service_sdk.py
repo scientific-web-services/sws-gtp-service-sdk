@@ -1,8 +1,8 @@
 import unittest
 
-from geophires_service_sdk import GeophiresServiceClient
-from geophires_service_sdk import GeophiresSimulationParameters
-from geophires_service_sdk import GeophiresSimulationRequest
+from sws_gtp_service_sdk import GeophiresServiceClient
+from sws_gtp_service_sdk import GeophiresSimulationParameters
+from sws_gtp_service_sdk import GeophiresSimulationRequest
 
 
 class GeophiresServiceSdkTest(unittest.TestCase):

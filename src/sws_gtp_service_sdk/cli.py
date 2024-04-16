@@ -8,9 +8,9 @@ Why does this file exist, and why not put this in __main__?
 
   - When you run `python -mgeophires_service_sdk` python will execute
     ``__main__.py`` as a script. That means there will not be any
-    ``geophires_service_sdk.__main__`` in ``sys.modules``.
+    ``sws_gtp_service_sdk.__main__`` in ``sys.modules``.
   - When you import __main__ it will get executed again (as a module) because
-    there"s no ``geophires_service_sdk.__main__`` in ``sys.modules``.
+    there"s no ``sws_gtp_service_sdk.__main__`` in ``sys.modules``.
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
