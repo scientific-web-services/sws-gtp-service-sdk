@@ -1,13 +1,13 @@
 import unittest
 
-from sws_gtp_service_sdk import GeophiresServiceClient
+from sws_gtp_service_sdk import GtpServiceClient
 from sws_gtp_service_sdk import GeophiresSimulationParameters
 from sws_gtp_service_sdk import GeophiresSimulationRequest
 
 
-class GeophiresServiceSdkTest(unittest.TestCase):
+class GtpServiceSdkTest(unittest.TestCase):
     def test_get_geophires_simulation_result(self):
-        client = GeophiresServiceClient()
+        client = GtpServiceClient()
         result = client.get_geophires_simulation_result(
             GeophiresSimulationRequest(
                 GeophiresSimulationParameters()

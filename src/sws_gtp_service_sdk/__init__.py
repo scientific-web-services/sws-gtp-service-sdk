@@ -42,7 +42,7 @@ class GeophiresSimulationResult:
         self.simulation_result = simulation_result
 
 
-class GeophiresServiceClient:
+class GtpServiceClient:
     def __init__(self, endpoint: str, api_key:str = None):
         self._endpoint = endpoint
         self._session = requests.Session()
