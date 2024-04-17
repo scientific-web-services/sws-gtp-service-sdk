@@ -15,18 +15,22 @@ class GeophiresSimulationParameters:
     def get_parameters(self) -> dict:
         return self._parameters
 
-    def with_gradient_1(self, gradient_1: float):  # -> Self:
-        return self.with_parameter('Gradient 1', gradient_1)
-
-    def with_maximum_temperature(self, max_temp: float):  # -> Self:
-        return self.with_parameter('Maximum Temperature', max_temp)
-
-    def with_reservoir_model(self, reservoir_model: int):  # -> Self:
-        return self.with_parameter('Reservoir Model', reservoir_model)
 
     def with_parameter(self, parameter_name: str, parameter_value: Any):  # -> Self:
         self._parameters[parameter_name] = parameter_value
         return self
+
+    def with_gradient_1(self, gradient_1: float):  # -> Self:
+        """TODO autogenerate from model"""
+        return self.with_parameter('Gradient 1', gradient_1)
+
+    def with_maximum_temperature(self, max_temp: float):  # -> Self:
+        """TODO autogenerate from model"""
+        return self.with_parameter('Maximum Temperature', max_temp)
+
+    def with_reservoir_model(self, reservoir_model: int):  # -> Self:
+        """TODO autogenerate from model"""
+        return self.with_parameter('Reservoir Model', reservoir_model)
 
 
 class GeophiresSimulationRequest:
@@ -62,7 +66,7 @@ class GtpServiceClient:
         # -> GeophiresSimulationResult:
 
         response = self._session.post(
-            self._endpoint,
+            f'{self._endpoint}/get-geophires-result',
             json={
                 'geophires_input_parameters': geophires_simulation_request.get_simulation_parameters().get_parameters()},
             timeout=30,
