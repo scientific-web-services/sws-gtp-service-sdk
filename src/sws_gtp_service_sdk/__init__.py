@@ -9,7 +9,7 @@ from requests.adapters import Retry
 
 
 
-class GeophiresSimulationParameters:
+class GeophiresParameters:
     def __init__(self):
         self._parameters = {}
 
@@ -34,15 +34,15 @@ class GeophiresSimulationParameters:
         return self.with_parameter('Reservoir Model', reservoir_model)
 
 
-class GeophiresSimulationRequest:
-    def __init__(self, simulation_parameters: GeophiresSimulationParameters):
-        self._simulation_parameters = simulation_parameters
+class GeophiresRequest:
+    def __init__(self, geophires_parameters: GeophiresParameters):
+        self._simulation_parameters = geophires_parameters
 
-    def get_simulation_parameters(self) -> GeophiresSimulationParameters:
+    def get_geophires_parameters(self) -> GeophiresParameters:
         return self._simulation_parameters
 
 
-class GeophiresSimulationResult:
+class GeophiresResult:
     def __init__(self, simulation_result: dict):
         self.simulation_result = simulation_result
 
@@ -87,17 +87,17 @@ class GtpServiceClient:
 
         # TODO should probably enable closing session
 
-    def get_geophires_simulation_result(self, geophires_simulation_request: GeophiresSimulationRequest):
-        # -> GeophiresSimulationResult:
+    def get_geophires_result(self, geophires_request: GeophiresRequest):
+        # -> GeophiresResult:
 
         response = self._session.post(
             f'{self._endpoint}/get-geophires-result',
             json={
-                'geophires_input_parameters': geophires_simulation_request.get_simulation_parameters().get_parameters()},
+                'geophires_input_parameters': geophires_request.get_geophires_parameters().get_parameters()},
             timeout=30,
             headers={'x-api-key': self._api_key} if self._api_key is not None else None
         )
-        return GeophiresSimulationResult(json.loads(response.text))
+        return GeophiresResult(json.loads(response.text))
 
     def get_hip_ra_result(self, hip_ra_request: HipRaRequest):
         response = self._session.post(
