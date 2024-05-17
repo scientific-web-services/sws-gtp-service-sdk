@@ -97,7 +97,12 @@ class GtpServiceClient:
             timeout=30,
             headers={'x-api-key': self._api_key} if self._api_key is not None else None
         )
-        return GeophiresResult(json.loads(response.text))
+        response_dict:dict = json.loads(response.text)
+
+        if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
+            raise requests.Timeout(response_dict['message'])
+
+        return GeophiresResult(response_dict)
 
     def get_hip_ra_result(self, hip_ra_request: HipRaRequest):
         response = self._session.post(
