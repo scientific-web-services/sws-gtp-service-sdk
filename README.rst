@@ -8,11 +8,11 @@ Overview
     :stub-columns: 1
 
     * - tests
-      - |
+      - | TODO
         |
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+      - | |commits-since|
+        .. | |version| |wheel| |supported-versions| |supported-implementations|
 
 .. |version| image:: https://img.shields.io/pypi/v/sws-gtp-service-sdk.svg
     :alt: PyPI Package latest release
