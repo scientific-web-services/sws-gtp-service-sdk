@@ -36,15 +36,15 @@ class GeophiresParameters:
 
 class GeophiresRequest:
     def __init__(self, geophires_parameters: GeophiresParameters):
-        self._simulation_parameters = geophires_parameters
+        self._geophires_parameters = geophires_parameters
 
     def get_geophires_parameters(self) -> GeophiresParameters:
-        return self._simulation_parameters
+        return self._geophires_parameters
 
 
 class GeophiresResult:
-    def __init__(self, simulation_result: dict):
-        self.simulation_result = simulation_result
+    def __init__(self, result: dict):
+        self.geophires_result = result
 
 
 class HipRaParameters:
@@ -72,12 +72,14 @@ class HipRaResult:
         self.hip_ra_result: dict = result
 
 class GtpServiceClient:
-    def __init__(self, endpoint: str, api_key: str = None):
+    def __init__(self, endpoint: str, api_key: str = None, auth_token:str = None):
         self._endpoint = endpoint
         self._session = requests.Session()
 
         # x-api-key
         self._api_key = api_key
+
+        self._auth_token = auth_token
 
         retries = Retry(total=3,
                         backoff_factor=0.1,
@@ -95,7 +97,7 @@ class GtpServiceClient:
             json={
                 'geophires_input_parameters': geophires_request.get_geophires_parameters().get_parameters()},
             timeout=30,
-            headers={'x-api-key': self._api_key} if self._api_key is not None else None
+            headers=self._get_geophires_service_headers()
         )
         response_dict:dict = json.loads(response.text)
 
@@ -110,6 +112,36 @@ class GtpServiceClient:
             json={
                 'hip_ra_input_parameters': hip_ra_request.get_hip_ra_parameters().get_parameters()},
             timeout=30,
-            headers={'x-api-key': self._api_key} if self._api_key is not None else None
+            headers=self._get_geophires_service_headers()
         )
         return HipRaResult(json.loads(response.text))
+
+    def create_geophires_result(self, geophires_request: GeophiresRequest):
+        response = self._session.post(
+            f'{self._endpoint}/create-geophires-result',
+            json={
+                'geophires_input_parameters': geophires_request.get_geophires_parameters().get_parameters()},
+            timeout=30,
+            headers=self._get_gtp_service_headers()
+        )
+        response_dict: dict = json.loads(response.text)
+
+        if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
+            raise requests.Timeout(response_dict['message'])
+
+        # FIXME TODO
+        return GeophiresResult(response_dict)
+
+    def _get_geophires_service_headers(self):
+        headers = {}
+        if self._api_key is not None:
+            headers['x-api-key'] = self._api_key
+
+        return headers
+
+    def _get_gtp_service_headers(self):
+        headers = {}
+        if self._auth_token is not None:
+            headers['Authorization'] = f'Bearer {self._auth_token}'
+
+        return headers
