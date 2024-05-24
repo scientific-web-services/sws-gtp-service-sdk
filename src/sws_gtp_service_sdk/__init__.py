@@ -46,6 +46,22 @@ class GeophiresResult:
     def __init__(self, result: dict):
         self.geophires_result = result
 
+    @property
+    def result_id(self) -> str:
+        return self.geophires_result['ResultId']
+
+class DescribeGeophiresResultsResult:
+    def __init__(self, geophires_results:list[GeophiresResult]):
+        self.geophires_results = geophires_results
+
+class DeleteGeophiresResultRequest:
+    def __init__(self, result_id: str):
+        self.result_id = result_id
+
+class DeleteGeophiresResultResult:
+    def __init__(self, result_id: str):
+        self.result_id = result_id
+
 
 class HipRaParameters:
     def __init__(self):
@@ -116,7 +132,7 @@ class GtpServiceClient:
         )
         return HipRaResult(json.loads(response.text))
 
-    def create_geophires_result(self, geophires_request: GeophiresRequest):
+    def create_geophires_result(self, geophires_request: GeophiresRequest) -> GeophiresResult:
         response = self._session.post(
             f'{self._endpoint}/create-geophires-result',
             json={
@@ -131,6 +147,32 @@ class GtpServiceClient:
 
         # FIXME TODO
         return GeophiresResult(response_dict)
+
+    def describe_geophires_results(self) -> DescribeGeophiresResultsResult:
+        response = self._session.post(
+            f'{self._endpoint}/describe-geophires-results',
+            timeout=30,
+            headers=self._get_gtp_service_headers()
+        )
+        response_list: list[dict[str,Any]] = json.loads(response.text)
+
+        if 'message' in response_list and response_list['message'] == 'Endpoint request timed out':
+            raise requests.Timeout(response_list['message'])
+
+        return DescribeGeophiresResultsResult([GeophiresResult(entry) for entry in response_list])
+
+    def delete_geophires_result(self, request:DeleteGeophiresResultRequest) -> DeleteGeophiresResultResult:
+        response = self._session.post(
+            f'{self._endpoint}/delete-geophires-result',
+            json={
+                'result_id': request.result_id
+            },
+            timeout=30,
+            headers=self._get_gtp_service_headers()
+        )
+        response_dict: dict = json.loads(response.text)
+
+        return DeleteGeophiresResultResult(response_dict['ResultId'])
 
     def _get_geophires_service_headers(self):
         headers = {}
