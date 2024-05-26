@@ -30,9 +30,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/sws-gtp-service-sdk
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/softwareengineerprogrammer/sws-gtp-service-sdk/v0.7.1.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/softwareengineerprogrammer/sws-gtp-service-sdk/v0.7.2.svg
     :alt: Commits since latest release
-    :target: https://github.com/softwareengineerprogrammer/sws-gtp-service-sdk/compare/v0.7.1...main
+    :target: https://github.com/softwareengineerprogrammer/sws-gtp-service-sdk/compare/v0.7.2...main
 
 
 
