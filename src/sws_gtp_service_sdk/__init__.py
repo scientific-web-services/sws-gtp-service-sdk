@@ -110,6 +110,7 @@ class HipRaResult:
     def __init__(self, result: dict):
         self.hip_ra_result: dict = result
 
+
 class GtpServiceClient:
     def __init__(self, endpoint: str, api_key: str = None, auth_token:str = None):
         self._endpoint = endpoint
@@ -137,10 +138,7 @@ class GtpServiceClient:
             timeout=30,
             headers=self._get_api_key_headers()
         )
-        response_dict:dict = json.loads(response.text)
-
-        if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
-            raise requests.Timeout(response_dict['message'])
+        response_dict: dict = self._get_response_dict(response)
 
         return GeophiresResult(response_dict)
 
@@ -152,7 +150,7 @@ class GtpServiceClient:
             timeout=30,
             headers=self._get_api_key_headers()
         )
-        return HipRaResult(json.loads(response.text))
+        return HipRaResult(self._get_response_dict(response))
 
     def create_geophires_result(self, geophires_request: GeophiresRequest) -> GeophiresResult:
         response = self._session.post(
@@ -162,10 +160,7 @@ class GtpServiceClient:
             timeout=30,
             headers=self._get_auth_token_headers()
         )
-        response_dict: dict = json.loads(response.text)
-
-        if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
-            raise requests.Timeout(response_dict['message'])
+        response_dict: dict = self._get_response_dict(response)
 
         return GeophiresResult(response_dict)
 
@@ -181,10 +176,8 @@ class GtpServiceClient:
             json=filters,
             headers=self._get_auth_token_headers()
         )
-        response_list: list[dict[str,Any]] = json.loads(response.text)
 
-        if 'message' in response_list and response_list['message'] == 'Endpoint request timed out':
-            raise requests.Timeout(response_list['message'])
+        response_list: list[dict[str, Any]] = self._get_response_list(response)
 
         return DescribeGeophiresResultsResult([GeophiresResult(entry) for entry in response_list])
 
@@ -195,10 +188,7 @@ class GtpServiceClient:
             json={'result_id': result_id},
             headers=self._get_api_key_headers()
         )
-        response_dict: dict = json.loads(response.text)
-
-        if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
-            raise requests.Timeout(response_dict['message'])
+        response_dict: dict = self._get_response_dict(response)
 
         return GeophiresResult(response_dict)
 
@@ -219,7 +209,7 @@ class GtpServiceClient:
             timeout=30,
             headers=self._get_auth_token_headers()
         )
-        response_dict: dict = json.loads(response.text)
+        response_dict: dict = self._get_response_dict(response)
 
         return UpdateGeophiresResultResult(response_dict['ResultId'])
 
@@ -233,7 +223,7 @@ class GtpServiceClient:
             timeout=30,
             headers=self._get_auth_token_headers()
         )
-        response_dict: dict = json.loads(response.text)
+        response_dict: dict = self._get_response_dict(response)
 
         return DeleteGeophiresResultResult(response_dict['ResultId'])
 
@@ -250,3 +240,28 @@ class GtpServiceClient:
             headers['Authorization'] = f'Bearer {self._auth_token}'
 
         return headers
+
+    def _get_response_list(self, response: requests.Response) -> list[dict[str, Any]]:
+        response_obj = json.loads(response.text)
+        self._raise_exception_if_error_response(response_obj)
+
+        return response_obj
+
+    def _get_response_dict(self, response: requests.Response) -> dict[str, Any]:
+        response_dict = json.loads(response.text)
+        self._raise_exception_if_error_response(response_dict)
+
+        if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
+            raise requests.Timeout(response_dict['message'])
+
+        return response_dict
+
+    def _raise_exception_if_error_response(self, response_obj: Any) -> None:
+        if isinstance(response_obj, dict):
+            response_dict: dict[str, Any] = response_obj
+            if 'message' in response_dict and response_dict['message'] == 'Endpoint request timed out':
+                raise requests.Timeout(response_obj['message'])
+
+            if 'error' in response_dict:
+                # TODO custom exceptions
+                raise RuntimeError(response_dict['error'])
