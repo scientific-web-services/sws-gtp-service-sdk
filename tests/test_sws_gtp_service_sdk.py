@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from sws_gtp_service_sdk import GtpServiceClient
@@ -7,7 +8,7 @@ from sws_gtp_service_sdk import GeophiresRequest
 
 class GtpServiceSdkTest(unittest.TestCase):
     def test_get_geophires_simulation_result(self):
-        client = GtpServiceClient()
+        client = GtpServiceClient(os.environ['SWS_GTP_ENDPOINT'])
         result = client.get_geophires_result(
             GeophiresRequest(
                 GeophiresParameters()
