@@ -70,8 +70,8 @@ class DeleteGeophiresResultResult:
 
 
 class SharePolicy(str, Enum):
-    PUBLIC = '*'
-    PRIVATE = ''
+    PUBLIC = 'PUBLIC'
+    PRIVATE = 'PRIVATE'
 
 
 class UpdateGeophiresResultRequest:
