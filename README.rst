@@ -2,17 +2,20 @@
 Overview
 ========
 
+SWS GTP SDK - https://gtp.scientificwebservices.com 
+
 .. start-badges
 
 .. list-table::
     :stub-columns: 1
 
-    * - tests
-      - | TODO
-        |
     * - package
       - | |commits-since|
         .. | |version| |wheel| |supported-versions| |supported-implementations|
+
+.. * - tests
+..  - | TODO
+..    |
 
 .. |version| image:: https://img.shields.io/pypi/v/sws-gtp-service-sdk.svg
     :alt: PyPI Package latest release
@@ -38,8 +41,6 @@ Overview
 
 .. end-badges
 
-SWS GTP Service SDK
-
 
 Installation
 ============
@@ -56,7 +57,7 @@ Documentation
 =============
 
 
-See example usage in https://github.com/softwareengineerprogrammer/sws-gtp-service-sdk/blob/main/tests/
+See example usage in https://github.com/scientific-web-services/sws-gtp-service-sdk/blob/main/tests/
 
 
 Development
