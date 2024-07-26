@@ -40,7 +40,6 @@ Overview
 
 SWS GTP Service SDK
 
-Free software: MIT license
 
 Installation
 ============
@@ -49,7 +48,7 @@ Installation
 
 Install the in-development version with::
 
-    pip install https://github.com/softwareengineerprogrammer/sws-gtp-service-sdk/archive/main.zip
+    pip install https://github.com/scientific-web-services/sws-gtp-service-sdk/archive/main.zip
 
 (Package may eventually be published to PyPi, enabling `pip install sws-gtp-service-sdk`)
 
