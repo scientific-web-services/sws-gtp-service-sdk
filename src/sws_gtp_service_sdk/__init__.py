@@ -82,9 +82,6 @@ class GtpServiceClient:
         self._endpoint = endpoint
         self._session = requests.Session()
 
-        # x-api-key
-        self._api_key = api_key
-
         self._auth_token = auth_token
 
         retries = Retry(total=3,
