@@ -13,7 +13,7 @@ def read(*names, **kwargs):
 
 setup(
     name='sws-gtp-service-sdk',
-    version='0.7.2',
+    version='0.8.0',
     license='MIT',
     description='SWS GTP service SDK',
     long_description='{}\n{}'.format(
