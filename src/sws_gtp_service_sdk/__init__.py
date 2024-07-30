@@ -52,40 +52,6 @@ class GeophiresResult:
         return self.geophires_result['ResultId']
 
 
-class DescribeGeophiresResultsRequest:
-    def __init__(self, result_id: str = None):
-        self.result_id = result_id
-
-class DescribeGeophiresResultsResult:
-    def __init__(self, geophires_results:list[GeophiresResult]):
-        self.geophires_results = geophires_results
-
-class DeleteGeophiresResultRequest:
-    def __init__(self, result_id: str):
-        self.result_id = result_id
-
-class DeleteGeophiresResultResult:
-    def __init__(self, result_id: str):
-        self.result_id = result_id
-
-
-class SharePolicy(str, Enum):
-    PUBLIC = 'PUBLIC'
-    PRIVATE = 'PRIVATE'
-
-
-class UpdateGeophiresResultRequest:
-    def __init__(self, result_id: str = None, description: str = None, share_policy: SharePolicy = None):
-        self.result_id = result_id
-        self.description = description
-        self.share_policy = share_policy
-
-
-class UpdateGeophiresResultResult:
-    def __init__(self, result_id: str):
-        self.result_id = result_id
-
-
 class HipRaParameters:
     def __init__(self):
         self._parameters = {}
@@ -112,7 +78,7 @@ class HipRaResult:
 
 
 class GtpServiceClient:
-    def __init__(self, endpoint: str, api_key: str = None, auth_token:str = None):
+    def __init__(self, endpoint: str, auth_token: str = None):
         self._endpoint = endpoint
         self._session = requests.Session()
 
@@ -132,11 +98,11 @@ class GtpServiceClient:
     def get_geophires_result(self, geophires_request: GeophiresRequest) -> GeophiresResult:
 
         response = self._session.post(
-            f'{self._endpoint}/get-geophires-result',
+            f'{self._endpoint}/v1/get-geophires-result',
             json={
                 'geophires_input_parameters': geophires_request.get_geophires_parameters().get_parameters()},
             timeout=30,
-            headers=self._get_api_key_headers()
+            headers=self._get_auth_token_headers()
         )
         response_dict: dict = self._get_response_dict(response)
 
@@ -144,95 +110,13 @@ class GtpServiceClient:
 
     def get_hip_ra_result(self, hip_ra_request: HipRaRequest):
         response = self._session.post(
-            f'{self._endpoint}/get-hip-ra-result',
+            f'{self._endpoint}/v1/get-hip-ra-result',
             json={
                 'hip_ra_input_parameters': hip_ra_request.get_hip_ra_parameters().get_parameters()},
             timeout=30,
-            headers=self._get_api_key_headers()
+            headers=self._get_auth_token_headers()
         )
         return HipRaResult(self._get_response_dict(response))
-
-    def create_geophires_result(self, geophires_request: GeophiresRequest) -> GeophiresResult:
-        response = self._session.post(
-            f'{self._endpoint}/create-geophires-result',
-            json={
-                'geophires_input_parameters': geophires_request.get_geophires_parameters().get_parameters()},
-            timeout=30,
-            headers=self._get_auth_token_headers()
-        )
-        response_dict: dict = self._get_response_dict(response)
-
-        return GeophiresResult(response_dict)
-
-    def describe_geophires_results(self,
-                                   request: DescribeGeophiresResultsRequest = None) -> DescribeGeophiresResultsResult:
-        filters = {}
-        if request is not None and request.result_id is not None:
-            filters['result_id'] = request.result_id
-
-        response = self._session.post(
-            f'{self._endpoint}/describe-geophires-results',
-            timeout=30,
-            json=filters,
-            headers=self._get_auth_token_headers()
-        )
-
-        response_list: list[dict[str, Any]] = self._get_response_list(response)
-
-        return DescribeGeophiresResultsResult([GeophiresResult(entry) for entry in response_list])
-
-    def get_shared_geophires_result(self, result_id) -> GeophiresResult:
-        response = self._session.post(
-            f'{self._endpoint}/get-shared-geophires-result',
-            timeout=30,
-            json={'result_id': result_id},
-            headers=self._get_api_key_headers()
-        )
-        response_dict: dict = self._get_response_dict(response)
-
-        return GeophiresResult(response_dict)
-
-    def update_geophires_result(self, request: UpdateGeophiresResultRequest) -> UpdateGeophiresResultResult:
-        update_json = {
-            'result_id': request.result_id,
-        }
-
-        if request.description is not None:
-            update_json['description'] = request.description
-
-        if request.share_policy is not None:
-            update_json['share_policy'] = request.share_policy.value
-
-        response = self._session.post(
-            f'{self._endpoint}/update-geophires-result',
-            json=update_json,
-            timeout=30,
-            headers=self._get_auth_token_headers()
-        )
-        response_dict: dict = self._get_response_dict(response)
-
-        return UpdateGeophiresResultResult(response_dict['ResultId'])
-
-
-    def delete_geophires_result(self, request:DeleteGeophiresResultRequest) -> DeleteGeophiresResultResult:
-        response = self._session.post(
-            f'{self._endpoint}/delete-geophires-result',
-            json={
-                'result_id': request.result_id
-            },
-            timeout=30,
-            headers=self._get_auth_token_headers()
-        )
-        response_dict: dict = self._get_response_dict(response)
-
-        return DeleteGeophiresResultResult(response_dict['ResultId'])
-
-    def _get_api_key_headers(self):
-        headers = {}
-        if self._api_key is not None:
-            headers['x-api-key'] = self._api_key
-
-        return headers
 
     def _get_auth_token_headers(self):
         headers = {}
