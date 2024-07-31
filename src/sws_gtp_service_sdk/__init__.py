@@ -1,13 +1,14 @@
 __version__ = '0.8.0'
 
 import json
+import os
 from enum import Enum
 from typing import Any
 
 import requests
 from requests.adapters import HTTPAdapter
 from requests.adapters import Retry
-
+from warrant import AWSSRP
 
 
 class GeophiresParameters:
@@ -77,12 +78,39 @@ class HipRaResult:
         self.hip_ra_result: dict = result
 
 
+class GtpCredentialHelper:
+    def __init__(self):
+        self.config: dict[str, str] = {
+            'pool_id': 'us-west-2_HELsUMzkF',
+            'client_id': '4tq6utj5ovsd3hvejbhi91nhds',
+        }
+
+    def auth_token(self) -> str:
+        user_id = os.environ.get('SWS_GTP_API_ACCESS_USER_ID')
+        password = os.environ.get('SWS_GTP_API_ACCESS_PASSWORD')
+
+        aws = AWSSRP(
+            username=user_id,
+            pool_id=self.config['pool_id'],
+            client_id=self.config['client_id'],
+            password=password,
+        )
+        tokens = aws.authenticate_user()
+
+        # id_token = str(tokens['AuthenticationResult']['IdToken'])
+        # refresh_token = tokens['AuthenticationResult']['RefreshToken']
+        access_token = tokens['AuthenticationResult']['AccessToken']
+        # token_type = tokens['AuthenticationResult']['TokenType']
+
+        return str(access_token)
+
+
 class GtpServiceClient:
-    def __init__(self, endpoint: str, auth_token: str = None):
+    def __init__(self, endpoint: str = 'https://api.gtp.scientificweb.services', auth_token: str | None = None):
         self._endpoint = endpoint
         self._session = requests.Session()
 
-        self._auth_token = auth_token
+        self._auth_token = auth_token if auth_token is not None else GtpCredentialHelper().auth_token()
 
         retries = Retry(total=3,
                         backoff_factor=0.1,

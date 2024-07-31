@@ -61,7 +61,13 @@ setup(
         # eg: "keyword1", "keyword2", "keyword3",
     ],
     python_requires='>=3.7',
-    install_requires=['requests'],
+    install_requires=[
+        'requests',
+        'warrant',  # 0.6.1
+        'requests-aws4auth',
+        'python-jose',
+        'cryptography',
+    ],
     extras_require={
         # eg:
         #   "rst": ["docutils>=0.11"],
